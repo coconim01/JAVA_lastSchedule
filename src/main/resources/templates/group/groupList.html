@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/mylayout}">
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta th:if="${_csrf}" name="_csrf" th:content="${_csrf.token}"/>
+<meta th:if="${_csrf}" name="_csrf_header" th:content="${_csrf.headerName}"/>
+<meta th:if="${_csrf}" name="_csrf_parameter" th:content="${_csrf.parameterName}"/>
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+  <script th:inline="javascript">
+        $(document).ready(function(){ /* 검색 button click */
+            $("#searchBtn").on("click",function(e) {
+                e.preventDefault(); /* 이벤트 전파 방지 */
+                page(0);
+            });
+        });
+
+        function page(page){
+
+            var searchBy = $("#searchBy").val();
+            var searchQuery = $("#searchQuery").val();
+
+             // 검색어가 비어있으면 값 대신 빈 문자열("")로 설정
+            if (searchBy === undefined) {
+                searchBy = "";
+            }
+            if (searchQuery === undefined) {
+                searchQuery = "";
+            }
+
+            location.href = "/group/list/" + page +
+                "?searchBy=" + searchBy +
+                "&searchQuery=" + searchQuery;
+        }
+    </script>
+</th:block>
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+  <style>
+        select{
+            margin-right:10px;
+        }
+
+        .btn-outline-white {
+          background-color: #B0E0E6;
+          color: #343a40;
+          transition: transform 0.3s;
+        }
+
+        .btn-outline-white:hover {
+          transform: scale(1.05);
+        }
+        .table-border {
+            border-color: #B0E0E6;
+        }
+        .table {
+            border-collapse: collapse;
+        }
+        .table td{
+            border-top-color: #B0E0E6; /* 위쪽 선을 제거 */
+        }
+    </style>
+</th:block>
+
+<div class="content" layout:fragment="content">
+  <form method="get" th:object="${groupFormDto}">
+  <h1>내가 만든 그룹</h1>
+  <br/>
+    <table class ="table table-border" style="border-bottom: 1px solid #B0E0E6;">
+      <thead>
+      <tr align="center">
+        <td></td>
+        <td>그룹 이름</td>
+        <td>작성자</td>
+        <td>총 학생 수</td>
+        <td>비고</td>
+        <td>삭제</td>
+      </tr>
+      </thead>
+      <tbody align="center">
+      <tr th:each="bean, status:${groups}">
+        <td></td>
+        <td>
+          <a th:href="'/group/detail/'+${bean.id}" th:text="${bean.groupName}"></a>
+        </td>
+        <td th:text="${bean.member.name}"></td>
+        <td th:text="${bean.headCount}"></td>
+        <td th:text="${bean.specialNote}"></td>
+
+        <td>
+          <a th:href="'/group/delete/'+${bean.id}" th:text="삭제"></a>
+        </td>
+      </tr>
+      <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">
+      </tbody>
+    </table>
+
+    <br/>
+
+    <a href="/schoolIssue/main" class="btn btn-outline-white"  align="center">
+      메인
+    </a>
+
+  </form>
+</div>
+</html>
+

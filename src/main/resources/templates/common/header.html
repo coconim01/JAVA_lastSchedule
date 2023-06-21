@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- IONICONS -->
+    <script src="https://unpkg.com/ionicons@5.2.3/dist/ionicons.js"></script>
+
+    <style>
+        @font-face {
+            font-family: 'CookieRun-Regular';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/CookieRun-Regular.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        /* GOOGLE FONTS */
+        @import url("https://fonts.googleapis.com/css2?family=Dovemayo_wild:wght@400;600&display=swap");
+
+        /* VARIABLES CSS */
+        :root {
+            --nav--width: 92px;
+
+            /* Colores */
+            /*
+            --first-color: #0c5df4;
+            --bg-color: #12192c;
+            --sub-color: #b6cefc;
+            --white-color: #fff;
+            */
+
+             /* Colores */
+            --first-color: #809bce;   /* 귀여운 파스텔 톤 색상 1 */
+            --bg-color: #B0E0E6;     /* 귀여운 파스텔 톤 색상 2 */
+            --sub-color: #809bce;    /* 귀여운 파스텔 톤 색상 3 */
+            --white-color: #003f5c;     /* 귀여운 파스텔 톤 색상 4 */
+
+
+            /* Fuente y tipografia */
+            --body-font: 'KBO-Dia-Gothic_bold', sans-serif;
+            --normal-font-size: 1rem;
+            --small-font-size: .875rem;
+
+            /* z index */
+            --z-fixed: 100;
+        }
+
+        /* BASE */
+        *, ::before, ::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            position: relative;
+            margin: 0;
+            padding: 2rem 0 0 6.75rem;
+            font-family: 'CookieRun-Regular', var(--body-font);
+            font-size: var(--normal-font-size);
+            transition: .5s;
+        }
+
+        h1 {
+            margin: 0;
+        }
+
+        ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        li {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            overflow: hidden;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        div {
+
+        }
+
+        /* l NAV */
+        .l-navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--nav--width);
+            height: 100vh;
+            background-color: var(--bg-color);
+            color: var(--white-color);
+            padding: 1.5rem 1.5rem 2rem;
+            transition: .5s;
+            z-index: var(--z-fixed);
+        }
+
+        /* NAV */
+
+        .nav {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+        }
+
+        .nav__brand {
+            display: grid;
+            grid-template-columns: max-content max-content;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .nav__toggle {
+            font-size: 1.25rem;
+            padding: .75rem;
+            cursor: pointer;
+        }
+
+        .choice {
+            font-size: 2rem;
+            padding: .75rem;
+            cursor: pointer;
+        }
+
+        .nav__logo {
+            font-size: 3rem;
+            color: var(--white-color);
+            font-weight: 600;
+            transition: transform 0.5s;
+            animation: shake 1s infinite;
+        }
+
+        /* 애니메이션 키프레임 정의 */
+        @keyframes shake {
+            0% {
+                transform: rotate(0deg);
+            }
+            25% {
+                transform: rotate(-30deg);
+            }
+            50% {
+                transform: rotate(0deg);
+            }
+            75% {
+                transform: rotate(30deg);
+            }
+            100% {
+                transform: rotate(0deg);
+            }
+        }
+
+
+        /* 선택되지 않은 요소 애니메이션 중지 */
+        #choice1:not(:checked) ~ .nav__logo[for="choice1"],
+        #choice2:not(:checked) ~ .nav__logo[for="choice2"] {
+            animation-play-state: paused;
+            transform: rotate(0deg) !important;
+        }
+
+        /* radio 버튼 선택에 따른 스타일 변경 */
+        #choice1:checked ~ .nav__logo[for="choice1"] {
+            /* 첫 번째 radio 선택 시의 스타일 */
+            transform: rotate(45deg);
+            color: mediumseagreen; /* 선택된 아이콘에 색 추가 */
+        }
+
+        #choice2:checked ~ .nav__logo[for="choice2"] {
+            /* 두 번째 radio 선택 시의 스타일 */
+            transform: rotate(90deg);
+            color: mediumseagreen; /* 선택된 아이콘에 색 추가 */
+        }
+
+        .nav__logo2 {
+            font-size: 1.25rem;
+            color: var(--white-color);
+            font-weight: 600;
+        }
+
+        .nav__link {
+            display: grid;
+            grid-template-columns: max-content max-content;
+            align-items: center;
+            column-gap: .75rem;
+            padding: .75rem;
+            color: var(--white-color);
+            border-radius: .5rem;
+            margin-bottom: 1rem;
+            transition: .3s;
+            cursor: pointer;
+        }
+
+        .memberName {
+            font-size: 1.25rem;
+        }
+
+        .nav__link:hover {
+            background-color: var(--first-color);
+        }
+
+        .nav__icon {
+            font-size: 1.25rem;
+        }
+
+        .nav_name {
+            font-size: var(--normal-font-size);
+        }
+
+        /* Expander menu */
+        .expander {
+            width: calc(var(--nav--width) + 12.25rem);
+        }
+
+        /* Add padding body*/
+        .body-pd {
+            padding: 2rem 0 0 16rem;
+        }
+
+        /* Active links menu */
+
+
+
+        /* COLLAPSE */
+        .collapse {
+            grid-template-columns: 20px max-content 1fr;
+        }
+
+        .collapse__link {
+            display: grid;
+            grid-template-columns: max-content max-content;
+            align-items: center;
+            column-gap: .75rem;
+            padding: .75rem;
+            color: var(--white-color);
+            border-radius: .5rem;
+            margin-bottom: 1rem;
+            transition: .3s;
+            cursor: pointer;
+        }
+
+        .collapse__link:hover {
+            background-color: var(--first-color);
+            font-color: var(--first-color);
+            text-decoration: underline;
+        }
+
+        .collapse__menu {
+            justify-self: flex-start;
+            display: none;
+            padding: .75rem 2.25rem;
+        }
+
+        .collapse__sublink {
+            color: var(--sub-color);
+            font-size: var(--normal-font-size);
+        }
+
+        .collapse__sublink:hover {
+            color: var(--white-color);
+        }
+
+        /* Show collapse */
+        .showCollapse {
+            display: block;
+        }
+
+    </style>
+
+    <title>SideBar sub menus</title>
+</head>
+<body id="body-pd">
+
+<div class="l-navbar" id="navbar">
+    <nav class="nav">
+        <div>
+            <div>
+                <form class="nav__brand">
+                    <label>
+                        <input type="radio" id="choice1" name="choice" value="shcoolmode" onchange="toggleMenu()" style="display: none;">
+                        <ion-icon class="nav__logo" for="choice1" name="people-circle-outline"></ion-icon>
+                    </label>
+                    <label>
+                        <input type="radio" id="choice2" name="choice" value="personalmode" onchange="toggleMenu()" checked style="display: none;">
+                        <ion-icon class="nav__logo" for="choice2" name="person-circle-outline"></ion-icon>
+                    </label>
+                </form>
+            </div>
+            <div class="nav__brand">
+                <ion-icon name="menu-outline" class="nav__toggle" id="nav-toggle"></ion-icon>
+                <a href="/" class="nav__logo2">아작</a>
+            </div>
+
+            <div class="nav__list">
+                <div sec:authorize="isAuthenticated()">
+                    <div class="collapse__link">
+                        <ion-icon name="person-outline" class="nav__icon"></ion-icon>
+                        <span class="nav_name" th:text="|${@memberRepository.findByEmail(#httpServletRequest.remoteUser).name} (${@memberRepository.findByEmail(#httpServletRequest.remoteUser).user})|"
+                        ></span>
+                    </div>
+                    <ul class="collapse__menu" th:if="${#strings.equals(@memberRepository.findByEmail(#httpServletRequest.remoteUser).user, 'TEACHER')}">
+                        <li>
+                            <a class="collapse__sublink" href="/members/list">회원목록</a>
+                        </li>
+                        <li>
+                            <a class="collapse__sublink" href="/group/mylist">내가 만든 그룹</a>
+                        </li>
+                    </ul>
+
+                    <ul class="collapse__menu" >
+                        <li>
+                            <a class="collapse__sublink" href="/members/list">마이페이지</a>
+                        </li>
+                        <li>
+                            <a class="collapse__sublink" href="/group/mylist">내가 만든 그룹</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div sec:authorize="isAuthenticated()" id="projectMenu2">
+                    <div class="collapse__link">
+                        <ion-icon name="calendar-outline" class="nav__icon"></ion-icon>
+                        <span class="nav_name">학교일정</span>
+                    </div>
+
+                    <ul class="collapse__menu">
+                        <li>
+                            <a class="collapse__sublink" href="/schoolIssue/main">학교 일정보기</a>
+                        </li>
+
+                        <!--
+                            <li th:if="${#strings.equals(@memberRepository.findByEmail(#httpServletRequest.remoteUser).user, 'TEACHER')}">
+                                <a class="collapse__sublink" href="/schoolIssue/new">학교 일정 만들기(schoolIssue/new)</a>
+                            </li>
+                            <li>
+                                <a class="collapse__sublink" href="/project/list/group">이슈보기(project/list/group)</a>
+                            </li>
+                            <li>
+                                <a class="collapse__sublink" href="/project/new">그룹 일정 만들기(project/new)</a>
+                            </li>
+                        -->
+                    </ul>
+                </div>
+
+                <div sec:authorize="isAuthenticated()" id="projectMenu">
+                    <div class="collapse__link">
+                        <ion-icon name="reader-outline" class="nav__icon"></ion-icon>
+                        <span class="nav_name">게시판</span>
+                    </div>
+
+                    <ul class="collapse__menu">
+                        <li>
+                            <a class="collapse__sublink" href="/noticeboard/list">공지게시판 </a>
+                        </li>
+                        <li>
+                            <a class="collapse__sublink" href="/suggestboard/list">건의게시판 </a>
+                        </li>
+                        <li>
+                            <a class="collapse__sublink" href="/freeboard/list">자유게시판 </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div sec:authorize="isAuthenticated()" id="otherMenu">
+                    <div class="collapse__link">
+                        <ion-icon name="time-outline" class="nav__icon"></ion-icon>
+                        <span class="nav_name">내일정</span>
+                    </div>
+
+                    <ul class="collapse__menu">
+                        <li>
+                            <a class="collapse__sublink" href="/personal/main">내일정 보기</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div sec:authorize="isAuthenticated()">
+                    <div class="collapse__link">
+                        <ion-icon name="people-outline" class="nav__icon"></ion-icon>
+                        <span class="nav_name">그룹 생성</span>
+                    </div>
+
+                    <ul class="collapse__menu">
+                        <li>
+                            <a class="collapse__sublink" href="/group/new">내그룹 만들기</a>
+                        </li>
+                    </ul>
+                </div>
+
+
+            </div>
+
+            <a href="/members/login" class="nav__link" sec:authorize="isAnonymous()">
+                <ion-icon name="log-in-outline" class="nav__icon"></ion-icon>
+                <span class="nav_name">Login</span>
+            </a>
+
+            <a href="/members/logout" class="nav__link" sec:authorize="isAuthenticated()">
+                <ion-icon name="log-out-outline" class="nav__icon"></ion-icon>
+                <span class="nav_name">Logout</span>
+            </a>
+
+        </div>
+    </nav>
+</div>
+
+<!-- IONICONS -->
+<script src="https://unpkg.com/ionicons@5.2.3/dist/ionicons.js"></script>
+<!-- 외부 JS 파일 -->
+<script>
+    /* EXPANDER MENU */
+    const showMenu = (toggleId, navbarId, bodyId) => {
+        const toggle = document.getElementById(toggleId),
+        navbar = document.getElementById(navbarId),
+        bodypadding = document.getElementById(bodyId)
+
+        if( toggle && navbar ) {
+            toggle.addEventListener('click', ()=>{
+                navbar.classList.toggle('expander');
+
+                bodypadding.classList.toggle('body-pd')
+            })
+        }
+    }
+
+    showMenu('nav-toggle', 'navbar', 'body-pd')
+
+    /* LINK ACTIVE */
+    const linkColor = document.querySelectorAll('.nav__link')
+    function colorLink() {
+        linkColor.forEach(l=> l.classList.remove('active'))
+        this.classList.add('active')
+    }
+
+    /* COLLAPSE MENU */
+    const linkCollapse = document.getElementsByClassName('collapse__link')
+    var i
+
+    for(i=0;i<linkCollapse.length;i++) {
+        linkCollapse[i].addEventListener('click', function(){
+            const collapseMenu = this.nextElementSibling
+            collapseMenu.classList.toggle('showCollapse')
+
+            const rotate = collapseMenu.previousElementSibling
+            rotate.classList.toggle('rotate')
+        });
+    }
+
+
+    function setCookie(name, value, days) {
+        var expires = "";
+        if (days) {
+            var date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            expires = "; expires=" + date.toUTCString();
+        }
+        document.cookie = name + "=" + (value || "") + expires + "; path=/";
+    }
+
+    function getCookie(name) {
+        var nameEQ = name + "=";
+        var ca = document.cookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ')
+            c = c.substring(1, c.length);
+            if (c.indexOf(nameEQ) == 0)
+            return c.substring(nameEQ.length, c.length);
+        }
+        return null;
+    }
+
+    var checkbox = document.querySelector('input[name="choice"]');
+    var radioGroup = document.querySelectorAll('input[name="choice"]');
+
+    // 체크된 라디오 버튼의 값을 쿠키에 저장합니다.
+    function saveSelectedChoice() {
+        var selectedValue = document.querySelector('input[name="choice"]:checked').value;
+        var currentChoice = getCookie("selectedChoice");
+
+        if (selectedValue !== currentChoice) {
+            setCookie("selectedChoice", selectedValue, 7);
+        }
+    }
+
+    checkbox.addEventListener('change', saveSelectedChoice);
+
+    radioGroup.forEach(function (radio) {
+        radio.addEventListener('change', saveSelectedChoice);
+    });
+
+    // 페이지 로드 시, 쿠키 값을 읽어와 체크 상태를 설정합니다.
+    var selectedChoice = getCookie("selectedChoice");
+    if (selectedChoice) {
+        document.getElementById("choice1").checked = (selectedChoice === "shcoolmode");
+        document.getElementById("choice2").checked = (selectedChoice === "personalmode");
+
+        toggleMenu(); // 페이지 로드 시에 toggleMenu() 호출하여 메뉴를 변경합니다.
+    }
+
+    function toggleMenu() {
+    var selectedChoice = document.querySelector('input[name="choice"]:checked').value;
+        var choice = document.querySelector('input[name="choice"]:checked').value;
+        var projectMenu = document.getElementById("projectMenu");
+        var projectMenu2 = document.getElementById("projectMenu2");
+        var otherMenu = document.getElementById("otherMenu");
+
+        if (choice === "shcoolmode") {
+            projectMenu.style.display = "block";
+            projectMenu2.style.display = "block";
+            otherMenu.style.display = "none";
+
+        } else if (choice === "personalmode") {
+            projectMenu.style.display = "none";
+            projectMenu2.style.display = "none";
+            otherMenu.style.display = "block";
+        }
+    }
+
+    // 페이지 로드 시에 toggleMenu() 호출하여 초기 메뉴를 설정합니다.
+    toggleMenu();
+</script>
+<!-- IONICONS -->
+<script src="https://unpkg.com/ionicons@5.2.3/dist/ionicons.js"></script>
+</body>
+</html>

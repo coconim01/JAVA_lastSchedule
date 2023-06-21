@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/mylayout}">
+<th:block layout:fragment="css">
+    <style>
+        .btn-outline-white {
+            background-color: #B0E0E6;
+            color: #343a40;
+            transition: transform 0.3s;
+        }
+
+        .btn-outline-white:hover {
+            transform: scale(1.05);
+        }
+
+        .table-border {
+            border-color: #B0E0E6;
+        }
+        .table {
+            border-collapse: collapse;
+        }
+        .table td{
+            border-top-color: #B0E0E6; /* 위쪽 선을 제거 */
+        }
+
+    </style>
+</th:block>
+
+<div class="content" layout:fragment="content">
+    <div class="card table-border" align="center" style="width:auto;">
+        <div class="d-flex table-border">
+            <div class="card flex-grow-1 table-border">
+                <div class="card-body table-border">
+                    <form action="" method="get" th:object="${project}">
+                        <p class="h2">
+                            그룹일정
+                        </p>
+                        <br/>
+                        <input type="hidden" name="groupId" value="${groupId}" />
+                        <table class="table table-border" width="25%" style="border-bottom: 1px solid #B0E0E6;">
+                            <tr>
+                                <td>업무번호</td>
+                                <td th:text="${project.id}"></td>
+                            </tr>
+                            <tr>
+                                <td>프로젝트명</td>
+                                <td th:text="${project.title}"></td>
+                            </tr>
+                            <tr>
+                                <td>중요도</td>
+                                <td th:text="${project.priority}"></td>
+                            </tr>
+                            <tr>
+                                <td>진행 상태</td>
+                                <td th:text="${project.status}"></td>
+                            </tr>
+                            <tr>
+                                <td>담당자</td>
+                                <td th:text="${project.editor}"></td>
+                            </tr>
+                            <tr>
+                                <td>내용</td>
+                                <td th:text="${project.description}"></td>
+                            </tr>
+
+                            <tr>
+                                <td>시작일</td>
+                                <td th:text="${project.startDate}"></td>
+                            </tr>
+                            <tr>
+                                <td>마감일</td>
+                                <td th:text="${project.finishDate}"></td>
+                            </tr>
+                        </table>
+                        <br/>
+
+                        <div align="left" class="button-container">
+                            <a th:href="@{'/project/list/group/' + ${groupId}}">
+                                <button type="button" class="btn btn-outline-white"
+                                        style="margin-left: auto;">돌아가기</button>
+                            </a>
+                            <a th:href="'/project/'+${projectId}">
+                                <button type="button" class="btn btn-outline-white"
+                                        style="margin-left: auto;">수정</button>
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/mylayout}">
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        $(document).ready(function(){
+        });
+    </script>
+</th:block>
+layout:decorate="~{common/mylayout}">
+<th:block layout:fragment="css">
+    <style>
+        .btn-outline-white {
+            background-color: #B0E0E6;
+            color: #343a40;
+            transition: transform 0.3s;
+        }
+
+        .btn-outline-white:hover {
+            transform: scale(1.05);
+        }
+
+        .table-border {
+            border-color: #B0E0E6;
+        }
+    </style>
+</th:block>
+
+<div class="content" layout:fragment="content">
+    <form action="" method="get" th:object="${freeBoard}">
+        <p class="h2">
+            자유게시판
+        </p>
+        <br/>
+        <td th:hidden="${freeBoard.fb_email}"></td>
+        <table class="table table-border" width="25%" border="1">
+            <thead>
+                <tr align="center" style="background-color:#B0E0E6">
+                    <td style="width: 70%">제목</td>
+                    <td style="width: 10%">작성자</td>
+                    <td style="width: 10%">글등록일</td>
+                    <td style="width: 10%">조회수</td>
+                </tr>
+            </thead>
+            <tbody align="center">
+                <tr>
+                    <td align="center" th:text="${freeBoard.fb_title}"></td>
+                    <td th:text="${freeBoard.fb_writer}"></td>
+                    <td th:text="${freeBoard.fb_postDate}"></td>
+                    <td th:text="${updatedViewCount}"></td>
+                </tr>
+                <tr>
+                    <td colspan="4" style="background-color:#B0E0E6">글내용</td>
+                </tr>
+                <tr>
+                    <td colspan="5" style="height: 200px; white-space: pre-wrap;">
+                        <div style="display: flex; align-items: flex-start; overflow: auto; height: 100%;">
+                            <div th:text="${freeBoard.fb_content}"></div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <br/>
+        <a th:href="'/freeboard/list'">
+            <button class="btn btn-outline-white"
+                    style="margin-left: auto;" type="button">돌아가기</button>
+        </a>
+        <a th:href="'/freeboard/'+${fb_no}">
+            <button class="btn btn-outline-white"
+                    style="margin-left: auto;" type="button" th:if="${#strings.equals(@memberRepository.findByEmail(#httpServletRequest.remoteUser).user, 'ADMIN') or #strings.equals(@memberRepository.findByEmail(#httpServletRequest.remoteUser).email, freeBoard.fb_email)}">수정</button>
+        </a>
+        <a th:href="'/freeboard/delete/'+${freeBoard.fb_no}">
+            <button class="btn btn-outline-white"
+                    style="margin-left: auto;" type="button" th:if="${#strings.equals(@memberRepository.findByEmail(#httpServletRequest.remoteUser).user, 'ADMIN') or #strings.equals(@memberRepository.findByEmail(#httpServletRequest.remoteUser).email, freeBoard.fb_email)}">삭제</button>
+        </a>
+
+        <br/>
+        <br/>
+    </form>
+</div>
+</html>

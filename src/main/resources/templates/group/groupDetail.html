@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{common/mylayout}">
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+  <script th:inline="javascript">
+            $(document).ready(function() {
+                // Document ready code here
+            });
+            $(document).ready(function() {
+                $('.modal-btn').click(function() {
+                    $('#modal').show();
+                });
+            });
+        </script>
+</th:block>
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+  <style>
+  .btn-outline-white {
+    background-color: #B0E0E6;
+    color: #343a40;
+    transition: transform 0.3s;
+  }
+
+  .btn-outline-white:hover {
+    transform: scale(1.05);
+  }
+  .table-border {
+      border-color: #B0E0E6;
+      border-bottom: 1px solid #B0E0E6;
+  }
+
+
+  .table {
+            border-collapse: collapse;
+  }
+  .table td{
+      border-top-color: #B0E0E6; /* 위쪽 선을 제거 */
+
+  }
+</style>
+</th:block>
+
+<div class="content" layout:fragment="content">
+  <div class="card table-border" align="center" style="width:auto;">
+    <div class="d-flex table-border">
+      <div class="card flex-grow-1 table-border">
+        <div class="card-body table-border">
+          <form action="" method="get" th:object="${group}">
+            <p class="h2">
+              <span th:text="${groupName}"></span>
+              그룹
+            </p>
+            <br/>
+            <a th:href="'/project/new/' + ${groupId}">
+              <div style="text-align: right;">
+                <button type="button" class="btn btn-outline-white" style="background-color: #B0E0E6; color: #000080">
+                  <i class="fas fa-plus"></i> 새 프로젝트 생성
+                </button>
+
+                <a th:href="@{/project/list/group/{groupId}(groupId=${groupId})}">
+                  <button type="button" class="btn btn-outline-white" style="background-color: #B0E0E6; color: #000080">
+                    <i class="button"></i> 그룹 일정 보기
+                  </button>
+                </a>
+              </div>
+              <br/>
+            </a>
+            <table class="table table-border" width="25%" style="border-bottom: 1px solid #B0E0E6;">
+              <tr>
+                <td>그룹번호</td>
+                <td th:text="${group.id}"></td>
+              </tr>
+              <tr>
+                <td>생성자</td>
+                <td th:text="${group.member.name}"></td>
+              </tr>
+              <tr>
+                <td>그룹명</td>
+                <td th:text="${group.groupName}"></td>
+              </tr>
+              <tr>
+                <td>총 학생 수</td>
+                <td th:text="${group.headCount}"></td>
+              </tr>
+              <tr>
+                <td>그룹멤버</td>
+                <td>
+                  <ul class="no-dot">
+                    <li th:each="member : ${group.groupMembers}" th:text="${member.member.name}" ></li>
+                  </ul>
+                </td>
+              </tr>
+              <tr>
+                <td>비고</td>
+                <td th:text="${group.specialNote}"></td>
+              </tr>
+            </table>
+            <div align="left">
+              <a th:href="'/group/list'">
+                <button type="button" class="btn btn-outline-white"
+                        style="margin-left: auto;">돌아가기</button>
+              </a>
+
+              <a th:href="'/group/'+ ${groupId}">
+                <button type="button" class="btn btn-outline-white"
+                        style="margin-left: auto;">수정</button>
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</html>

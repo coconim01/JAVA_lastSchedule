@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/mylayout}">
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta th:if="${_csrf}" name="_csrf" th:content="${_csrf.token}"/>
+<meta th:if="${_csrf}" name="_csrf_header" th:content="${_csrf.headerName}"/>
+<meta th:if="${_csrf}" name="_csrf_parameter" th:content="${_csrf.parameterName}"/>
+<head>
+  <meta charset='utf-8' />
+  <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.6/index.global.min.js'></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.5.0/css/bootstrap.min.css" />
+
+  <script
+        src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+        crossorigin="anonymous"></script>
+<script src='fullcalendar/core/index.global.js'></script>
+<script src='fullcalendar/core/locales-all.global.js'></script>
+</head>
+<body>
+<div class="content" layout:fragment="content">
+<div class="container">
+  <div class="left-section">
+    <div class="calendar-container">
+      <div id='calendar'></div>
+    </div>
+  </div>
+  <div class="right-section">
+    <div class="right-section-1">
+      <div id="notificationContainer"></div>
+    </div>
+    <div class="right-section-2"></div>
+  </div>
+</div>
+<script>
+    var calendarEl = document.getElementById('calendar');
+    var notificationContainer = document.getElementById('notificationContainer');
+    var tooltipContainer = document.createElement('div');
+    tooltipContainer.className = 'right-section-2';
+    document.querySelector('.right-section').appendChild(tooltipContainer);
+
+    var request = $.ajax({
+      url: "/events/school/calendar",
+      method: "GET",
+    });
+    request.done(function (data) {
+      var calendar = new FullCalendar.Calendar(calendarEl, {
+        themeSystem: 'bootstrap',
+        eventTimeFormat: {
+          hour: 'numeric',
+          minute: '2-digit',
+          meridiem: false
+        },
+        buttonIcons: {
+          prev: 'bi bi-chevron-left',
+          next: 'bi bi-chevron-right',
+          prevYear: 'bi bi-chevron-double-left',
+          nextYear: 'bi bi-chevron-double-right'
+        },
+        buttonText: {
+          prev: '이전',
+          next: '다음',
+          prevYear: '작년',
+          nextYear: '내년',
+          today: '오늘',
+          month: '월',
+          week: '주',
+          day: '일',
+          list: '목록'
+        },
+        locale: 'ko',
+        initialView: 'dayGridMonth',
+        firstDay: 1,
+        eventOrder: 'importance',
+        titleFormat: function (date) {
+          var year = date.date.year;
+          var month = date.date.month + 1;
+          return year + "년 " + month + "월";
+        },
+        views: {
+          timeGrid: {
+            scrollTime: '00:00:00'
+          },
+          timeGridDay: {
+            scrollTime: '00:00:00'
+          }
+        },
+
+        contentHeight: 'auto',
+        events: data,
+        eventClick: function(e) {
+          if(e.url) {
+            window.open(e.url, "_blank");
+            return false;
+          }
+        },
+        dateClick: function (info) {
+          if (calendar.view.type === 'dayGridMonth') {
+            calendar.changeView('timeGridDay', info.dateStr);
+          } else if (calendar.view.type === 'timeGridDay') {
+            calendar.changeView('dayGridMonth', info.dateStr);
+          }
+        },
+        eventClassNames: function(arg) {
+          if (arg.event.extendedProps.calendarType === 'reddate') {
+            return 'reddate-event';
+          }
+          return '';
+        },
+        eventDidMount: function (info) {
+          var eventElement = info.el;
+          var event = info.event;
+
+          // 일정 요소에 마우스 오버 시 제목과 설명을 표시하기 위한 이벤트 리스너 추가
+          eventElement.addEventListener('mouseenter', function () {
+            showEventTooltip(event.title, event.extendedProps.description);
+          });
+
+          // 일정 요소 클릭 시 제목과 설명을 표시하기 위한 이벤트 리스너 추가
+          eventElement.addEventListener('click', function () {
+            showEventTooltip(event.title, event.extendedProps.description);
+          });
+        }
+      });
+      calendar.setOption('locale', 'kr');
+      calendar.render();
+
+    // 일정 정보를 툴팁으로 표시
+    function showEventTooltip(title, description) {
+      // 생성된 툴팁이 이미 존재하는 경우, 툴팁을 숨기고 제거
+      var existingTooltip = document.querySelector('.event-tooltip');
+      if (existingTooltip) {
+        existingTooltip.style.display = 'none';
+        existingTooltip.remove();
+      }
+
+      // 툴팁을 생성하고 내용을 설정
+      var tooltip = document.createElement('div');
+      tooltip.className = 'event-tooltip';
+      tooltip.innerHTML = '<strong>' + title + '</strong><br>' + description;
+
+      // 툴팁을 right-section-2에 추가하여 표시
+      document.querySelector('.right-section-2').appendChild(tooltip);
+
+      // 마우스 위치에 따라 툴팁 위치 조정
+      document.addEventListener('mousemove', positionTooltip);
+
+      // 툴팁을 클릭하거나 마우스를 벗어나면 숨김
+      tooltip.addEventListener('click', hideEventTooltip);
+      document.addEventListener('mouseleave', hideEventTooltip);
+
+      // 툴팁의 위치를 마우스 위치에 따라 조정
+      function positionTooltip(event) {
+        tooltip.style.top = event.pageY + 'px';
+        tooltip.style.left = event.pageX + 'px';
+      }
+
+      // 툴팁 숨김
+      function hideEventTooltip() {
+        document.removeEventListener('mousemove', positionTooltip);
+        tooltip.remove();
+      }
+    }
+
+
+      function checkUpcomingEvents() {
+        var currentTime = new Date();
+        var futureTime = new Date();
+        futureTime.setDate(currentTime.getDate() + 7);
+        var events = calendar.getEvents();
+        var notificationMessages = [];
+
+        for (var i = 0; i < events.length; i++) {
+          var event = events[i];
+          var eventTime = event.start;
+
+          if ((eventTime >= currentTime && eventTime <= futureTime) || (eventTime <= currentTime && event.end >= currentTime)) {
+            var daysRemaining;
+            var message;
+
+            if (eventTime <= currentTime && event.end >= currentTime) {
+              daysRemaining = 0;
+              message = `진행 중인 일정: =================================
+              ${event.title}\n(날짜: ${eventTime.toLocaleString()} - ${event.end.toLocaleString()})`;
+            } else {
+              daysRemaining = Math.ceil((eventTime - currentTime) / (1000 * 60 * 60 * 24));
+              message = `${daysRemaining} 일 남은 일정: =================================
+              ${event.title}\n(날짜: ${eventTime.toLocaleString()})`;
+            }
+
+            notificationMessages.push(message);
+          }
+        }
+
+        showNotifications(notificationMessages);
+      }
+
+      function showNotifications(messages) {
+        notificationContainer.innerHTML = "";
+
+        for (var i = 0; i < messages.length; i++) {
+          var message = messages[i];
+          var notification = document.createElement("div");
+          notification.className = "notification";
+          notification.textContent = message;
+          notificationContainer.appendChild(notification);
+        }
+      }
+
+      setInterval(checkUpcomingEvents, 10000);
+      checkUpcomingEvents();
+    });
+</script>
+
+<style>
+    body {
+      font-family: 'CustomFont', Arial, sans-serif;
+    }
+   .container {
+      display: flex;
+      height: 100vh;
+      width: 100vh;
+    }
+
+    .left-section {
+      flex: 3;
+      padding: 10px;
+      box-sizing: border-box;
+      overflow-y: auto;
+      border: 1px solid #ccc;
+      height: 100%;
+    }
+    @media (max-width: 1000px) {
+      .left-section {
+        min-width: auto;
+      }
+    }
+
+    .right-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      height: 100%;
+    }
+
+    .right-section-1 {
+      flex: 1;
+      padding: 10px;
+      box-sizing: border-box;
+      overflow-y: auto;
+      background-color: #f2f2f2;
+    }
+    .reddate-event {
+      background-color: #FFC0CB;
+      /* 추가적인 스타일 설정 */
+    }
+    .right-section-2 {
+      flex: 1;
+      padding: 10px;
+      box-sizing: border-box;
+      overflow-y: auto;
+      background-color: #f2f2f2;
+    }
+    .fc-state-highlight {
+      opacity: 0;
+      border: none;
+    }
+    .fc-time-grid-event.fc-v-event.fc-event {
+      border-radius: 4px;
+      border: none;
+      padding: 5px;
+      opacity: .65;
+      left: 5% !important;
+      right: 5% !important;
+    }
+    .fc-event {
+      font-size: inherit !important;
+      font-weight: bold !important;
+    }
+    .fc td,
+    .fc th {
+      border-style: none !important;
+      border-width: 1px !important;
+      padding: 0 !important;
+      vertical-align: top !important;
+    }
+    .fc-event .fc-bg {
+      z-index: 1 !important;
+      background: inherit !important;
+      opacity: .25 !important;
+    }
+    .fc-time-grid-event .fc-time {
+      font-weight: normal !important;
+    }
+    .fc-ltr .fc-h-event.fc-not-end,
+    .fc-rtl .fc-h-event.fc-not-start {
+      opacity: .65 !important;
+      margin-left: 12px !important;
+      padding: 5px !important;
+    }
+    .fc-day-grid-event.fc-h-event.fc-event.fc-not-start.fc-end {
+      opacity: .65 !important;
+      margin-left: 12px !important;
+      padding: 5px !important;
+    }
+    .fc-button {
+      display: inline-block;
+      position: relative;
+      cursor: pointer;
+      min-height: 36px;
+      min-width: 88px;
+      line-height: 36px;
+      vertical-align: middle;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+      text-align: center;
+      border-radius: 2px;
+      box-sizing: border-box;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      outline: none;
+      border: 0;
+      padding: 0 6px;
+      margin: 6px 8px;
+      letter-spacing: .01em;
+      background: transparent;
+      color: currentColor;
+      white-space: nowrap;
+      text-transform: uppercase;
+      font-weight: 500;
+      font-size: 14px;
+      font-style: inherit;
+      font-variant: inherit;
+      font-family: inherit;
+      text-decoration: none;
+      overflow: hidden;
+      -webkit-transition: box-shadow .4s cubic-bezier(.25, .8, .25, 1), background-color .4s cubic-bezier(.25, .8, .25, 1);
+      transition: box-shadow .4s cubic-bezier(.25, .8, .25, 1), background-color .4s cubic-bezier(.25, .8, .25, 1);
+    }
+    .fc-button:hover {
+      background-color: rgba(158, 158, 158, 0.2);
+    }
+    .fc-button:focus,
+    .fc-button:hover {
+      text-decoration: none;
+    }
+    .fc-state-active {
+      background-color: rgba(158, 158, 158, 0.2);
+    }
+    .fc-state-default {
+      box-shadow: None;
+    }
+    .fc-day-sun a {
+      color: red;
+      text-decoration: none;
+    }
+    .fc-day-sat a {
+      color: blue;
+      text-decoration: none;
+    }
+    #calendar {
+      margin-bottom: 20px;
+    }
+    .calendar-filter {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .calendar-filter select {
+      padding: 5px 10px;
+      border: none;
+      border-radius: 5px;
+      background-color: #f0f0f0;
+    }
+  </style>
+</div>
+</body>
+</html>

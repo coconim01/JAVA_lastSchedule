@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/mylayout}">
+<head>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.17.0/plugins/CSSPlugin.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.17.0/easing/EasePack.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.17.0/TweenLite.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/latest/TimelineLite.min.js"></script>
+
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        $(document).ready(function(){ /* 검색 button click */
+            $("#searchBtn").on("click",function(e) {
+                e.preventDefault(); /* 이벤트 전파 방지 */
+                page(0);
+            });
+        });
+
+        function page(page){
+
+            var fb_searchBy = $("#fb_searchBy").val();
+            var fb_searchQuery = $("#fb_searchQuery").val();
+
+            location.href="/freeboard/list/" + page
+            + "?fb_searchBy=" + fb_searchBy
+            + "&fb_searchQuery=" + fb_searchQuery;
+        }
+
+        $(document).ready(function() {
+                $(".button--bubble").each(function() {
+                      var $circlesTopLeft = $(this).parent().find(".circle.top-left");
+                      var $circlesBottomRight = $(this).parent().find(".circle.bottom-right");
+
+                      var tl = new TimelineLite();
+                      var tl2 = new TimelineLite();
+
+                      var btTl = new TimelineLite({ paused: true });
+
+                      tl.to($circlesTopLeft, 1.2, { x: -25, y: -25, scaleY: 2, ease: SlowMo.ease.config(0.1, 0.7, false) });
+                      tl.to($circlesTopLeft.eq(0), 0.1, { scale: 0.2, x: "+=6", y: "-=2" });
+                      tl.to($circlesTopLeft.eq(1), 0.1, { scaleX: 1, scaleY: 0.8, x: "-=10", y: "-=7" }, "-=0.1");
+                      tl.to($circlesTopLeft.eq(2), 0.1, { scale: 0.2, x: "-=15", y: "+=6" }, "-=0.1");
+                      tl.to($circlesTopLeft.eq(0), 1, { scale: 0, x: "-=5", y: "-=15", opacity: 0 });
+                      tl.to($circlesTopLeft.eq(1), 1, { scaleX: 0.4, scaleY: 0.4, x: "-=10", y: "-=10", opacity: 0 }, "-=1");
+                      tl.to($circlesTopLeft.eq(2), 1, { scale: 0, x: "-=15", y: "+=5", opacity: 0 }, "-=1");
+
+                      var tlBt1 = new TimelineLite();
+                      var tlBt2 = new TimelineLite();
+
+                      tlBt1.set($circlesTopLeft, { x: 0, y: 0, rotation: -45 });
+                      tlBt1.add(tl);
+
+                      tl2.set($circlesBottomRight, { x: 0, y: 0 });
+                      tl2.to($circlesBottomRight, 1.1, { x: 30, y: 30, ease: SlowMo.ease.config(0.1, 0.7, false) });
+                      tl2.to($circlesBottomRight.eq(0), 0.1, { scale: 0.2, x: "-=6", y: "+=3" });
+                      tl2.to($circlesBottomRight.eq(1), 0.1, { scale: 0.8, x: "+=7", y: "+=3" }, "-=0.1");
+                      tl2.to($circlesBottomRight.eq(2), 0.1, { scale: 0.2, x: "+=15", y: "-=6" }, "-=0.2");
+                      tl2.to($circlesBottomRight.eq(0), 1, { scale: 0, x: "+=5", y: "+=15", opacity: 0 });
+                      tl2.to($circlesBottomRight.eq(1), 1, { scale: 0.4, x: "+=7", y: "+=7", opacity: 0 }, "-=1");
+                      tl2.to($circlesBottomRight.eq(2), 1, { scale: 0, x: "+=15", y: "-=5", opacity: 0 }, "-=1");
+
+                      tlBt2.set($circlesBottomRight, { x: 0, y: 0, rotation: 45 });
+                      tlBt2.add(tl2);
+
+                      btTl.add(tlBt1);
+                      btTl.to($(this).parent().find('.button.effect-button'), 0.8, { scaleY: 1.1 }, 0.1);
+                      btTl.add(tlBt2, 0.2);
+                      btTl.to($(this).parent().find('.button.effect-button'), 1.8, { scale: 1, ease: Elastic.easeOut.config(1.2, 0.4) }, 1.2);
+
+                      btTl.timeScale(2.6);
+
+                      $(this).on("mouseover", function() {
+                        btTl.restart();
+                      });
+                });
+            });
+
+    </script>
+</th:block>
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+    <style>
+        .btn-outline-white {
+            background-color: #B0E0E6;
+            color: #343a40;
+            transition: transform 0.3s;
+        }
+
+        .btn-outline-white:hover {
+            transform: scale(1.05);
+        }
+
+        select{
+            margin-right:10px;
+        }
+        select{
+            margin-right:10px;
+        }
+
+        #color{
+          background: #B0E0E6;
+        }
+
+
+        .rwd-table {
+            margin: auto;
+            width: 95%;
+            border-collapse: collapse;
+        }
+
+        .rwd-table tr:first-child {
+            background: #B0E0E6;
+            color: #fff;
+        }
+
+        .rwd-table tr {
+            border-top: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+            background-color: white;
+        }
+
+        /*.rwd-table tr:nth-child(odd):not(:first-child) {*/
+        /*    background-color: #ebf3f9;*/
+        /*}*/
+
+        .rwd-table th {
+            display: none;
+        }
+
+        .rwd-table td {
+            display: block;
+        }
+
+        .rwd-table td:first-child {
+            margin-top: .5em;
+        }
+
+        .rwd-table td:last-child {
+            margin-bottom: .5em;
+        }
+
+        .rwd-table td:before {
+            /*content: attr(data-th) ": ";*/
+            font-weight: bold;
+            width: 120px;
+            display: inline-block;
+            color: #000;
+        }
+
+        .rwd-table th,
+        .rwd-table td {
+            text-align: left;
+        }
+
+        .rwd-table {
+            color: #333;
+            border-radius: .4em;
+            overflow: hidden;
+        }
+
+        .rwd-table tr {
+            border-color: #B0E0E6;
+        }
+
+        .rwd-table th,
+        .rwd-table td {
+            padding: .5em 1em;
+        }
+        @media screen and (max-width: 601px) {
+            .rwd-table tr:nth-child(2) {
+                border-top: none;
+            }
+            .rwd-table th:first-child,
+            .rwd-table td:first-child {
+                font-weight : bold;
+                color: black;
+            }
+            .rwd-table td a {
+                text-decoration: none;
+                color: black;
+            }
+        }
+        @media screen and (min-width: 600px) {
+            .rwd-table tr:hover:not(:first-child) {
+                background-color: rgba(206, 243, 249, 0.3);
+                /*background-color: #83F4B4;과 동일 opacity*/
+            }
+            .rwd-table td:before {
+                display: none;
+            }
+            .rwd-table td a {
+                text-decoration: none;
+                color: black;
+            }
+            .rwd-table th,
+            .rwd-table td {
+                display: table-cell;
+                padding: .25em .5em;
+            }
+            .rwd-table th:first-child,
+            .rwd-table td:first-child {
+                font-weight : bold;
+                padding-left: 0;
+            }
+            .rwd-table th:last-child,
+            .rwd-table td:last-child {
+                padding-right: 0;
+            }
+            .rwd-table th,
+            .rwd-table td {
+                padding: 1em !important;
+            }
+        }
+        .table-border {
+            border-color: #B0E0E6;
+        }
+
+        * {
+              box-sizing: border-box;
+            }
+
+            .bubbleBubbleButton {
+              display: block;
+              height: 100%;
+              -webkit-animation: hue-rotate 10s linear infinite;
+                      animation: hue-rotate 10s linear infinite;
+            }
+
+            .button {
+              -webkit-font-smoothing: antialiased;
+              background-color: #FDC2EF;
+              border: none;
+              border-radius: 5px; /*버튼 동그랗게*/
+              color: #fff;
+              display: inline-block;
+              font-family: "CookieRun-Regular", sans-serif;
+              font-size: 14px;
+              font-weight: 100;
+              text-decoration: none;
+              -webkit-user-select: none;
+                 -moz-user-select: none;
+                  -ms-user-select: none;
+                      user-select: none;
+              letter-spacing: 1px;
+              color: white;
+              padding: 10px 20px; /*버튼사이즈*/
+              text-transform: uppercase;
+              transition: all 0.1s ease-out;
+            }
+            .button:hover {
+              background-color: #90feb5;
+              color: #fff;
+            }
+            .button:active {
+              transform: scale(0.95);
+            }
+            .button--bubble {
+              position: relative;
+              z-index: 2;
+              color: white;
+              background: none;
+            }
+            .button--bubble:hover {
+              background: none;
+            }
+            .button--bubble:hover + .button--bubble__effect-container .circle {
+              background: #44fd82;
+            }
+            .button--bubble:hover + .button--bubble__effect-container .button {
+              background: #44fd82;
+            }
+            .button--bubble:active + .button--bubble__effect-container {
+              transform: scale(0.95);
+            }
+            .button--bubble__container {
+              position: relative;
+              display: inline-block;
+            }
+            .button--bubble__container .effect-button {
+              position: absolute;
+              width: 50%;
+              height: 25%;
+              top: 50%;
+              left: 25%;
+              z-index: 1;
+              transform: translateY(-50%);
+              background: #FDC2EF;
+              transition: background 0.1s ease-out;
+            }
+
+            .button--bubble__effect-container {
+              position: absolute;
+              display: block;
+              width: 200%;
+              height: 400%;
+              top: -150%;
+              left: -50%;
+              filter: url("#goo");
+              transition: all 0.1s ease-out;
+              pointer-events: none;
+            }
+            .button--bubble__effect-container .circle {
+              position: absolute;
+              width: 25px;
+              height: 25px;
+              border-radius: 15px;
+              background: #FDC2EF;
+              transition: background 0.1s ease-out;
+            }
+            .button--bubble__effect-container .circle.top-left {
+              top: 40%;
+              left: 27%;
+            }
+            .button--bubble__effect-container .circle.bottom-right {
+              bottom: 40%;
+              right: 27%;
+            }
+
+            .goo {
+              position: absolute;
+              visibility: hidden;
+              width: 1px;
+              height: 1px;
+            }
+
+            html, body {
+              width: 100%;
+              height: 100%;
+              text-align: center;
+            }
+
+            .button--bubble__container {
+              top: 50%;
+              margin-top: -25px;
+            }
+
+            @-webkit-keyframes hue-rotate {
+              from {
+                -moz-filter: hue-rotate(0);
+                -ms-filter: hue-rotate(0);
+                filter: hue-rotate(0);
+              }
+              to {
+                -moz-filter: hue-rotate(360deg);
+                -ms-filter: hue-rotate(360deg);
+                filter: hue-rotate(360deg);
+              }
+            }
+
+            @keyframes hue-rotate {
+              from {
+                -moz-filter: hue-rotate(0);
+                -ms-filter: hue-rotate(0);
+                filter: hue-rotate(0);
+              }
+              to {
+                -moz-filter: hue-rotate(360deg);
+                -ms-filter: hue-rotate(360deg);
+                filter: hue-rotate(360deg);
+              }
+            }
+
+
+  </style>
+</th:block>
+</head>
+
+<body>
+<div class="content" layout:fragment="content">
+    <form action="" method="get" th:object="${searchDto}">
+        <p class="h2">
+            자유게시판
+        </p>
+        <br/>
+        <div class="form-inline justify-content-center">
+            <div>
+            <select class="form-control table-border" id="fb_searchBy" name="fb_searchBy" th:value="${searchDto.fb_searchBy}">
+                <option value="" th:selected="${searchDto.fb_searchBy == ''}">전체</option>
+                <option value="title" th:selected="${searchDto.fb_searchBy == 'title'}">제목</option>
+                <option value="name" th:selected="${searchDto.fb_searchBy == 'name'}">작성자</option>
+                <option value="email" th:selected="${searchDto.fb_searchBy == 'email'}">이메일</option>
+                <!-- Add other options here -->
+            </select>
+
+            <input th:field="*{fb_searchQuery}" class="form-control table-border" type="text" placeholder="검색어를 입력해주세요.">
+            <button id="searchBtn" type="submit" class="btn btn-outline-white"
+                    style="margin-left: auto;">검색</button>
+
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            </div>
+        </div>
+        <br/>
+        <!-- /* 데이터 목록 */ -->
+        <table class="rwd-table">
+            <tbody align="center">
+                <tr align="center">
+                    <td></td>
+                    <td>제목</td>
+                    <td>작성자</td>
+                    <td>이메일</td>
+                    <td>글등록일</td>
+                    <td>조회수</td>
+                    <td hidden>학교코드</td>
+                    <td>삭제</td>
+                </tr>
+
+
+                <tr th:each="bean, status : ${freeBoards.getContent}" th:if="${#strings.equals(@memberRepository.findByEmail(#httpServletRequest.remoteUser).schoolCode, bean.fb_schoolCode)}">
+                    <td></td>
+                    <td>
+                        <a th:href="'/freeboard/detail/' + ${bean.fb_no}" th:text="${bean.fb_title}"></a>
+                    </td>
+                    <td th:text="${bean.fb_writer}"></td>
+                    <td th:text="${bean.fb_email}"></td>
+                    <td th:text="${bean.fb_postDate}"></td>
+                    <td th:text="${bean.fb_viewCount}"></td>
+                    <td hidden th:text="${bean.fb_schoolCode}"></td>
+
+                    <td th:if="${#strings.equals(@memberRepository.findByEmail(#httpServletRequest.remoteUser).email, bean.fb_email)}">
+                        <a th:href="'/freeboard/delete/'+${bean.fb_no}" th:text="삭제"></a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <br/>
+
+        <div class="bubbleBubbleButton" align="left">
+            <svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="goo">
+                <defs>
+                    <filter id="goo">
+                        <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+                        <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9" result="goo" />
+                        <feComposite in="SourceGraphic" in2="goo"/>
+                    </filter>
+                </defs>
+            </svg>
+
+            <span class="button--bubble__container">
+              <a th:href="@{/freeboard/new}" class="button button--bubble">
+                글쓰기
+              </a>
+              <span class="button--bubble__effect-container">
+                <span class="circle top-left"></span>
+                <span class="circle top-left"></span>
+                <span class="circle top-left"></span>
+
+                <span class="button effect-button"></span>
+
+                <span class="circle bottom-right"></span>
+                <span class="circle bottom-right"></span>
+                <span class="circle bottom-right"></span>
+              </span>
+            </span>
+        </div>
+
+        <!-- /* 페이지 네이션 */ -->
+        <div th:with="start=${(freeBoards.number/maxPage)*maxPage + 1}, end=(${(freeBoards.totalPages == 0) ? 1 : (start + (maxPage - 1) < freeBoards.totalPages ? start + (maxPage - 1) : freeBoards.totalPages)})" >
+            <ul class="pagination justify-content-center table-border">
+                <li class="page-item table-border" th:classappend="${freeBoards.first}?'disabled'">
+                    <a th:onclick="'javascript:page(' + ${freeBoards.number - 1} + ')'" aria-label='Previous' class="page-link table-border">
+                        <span aria-hidden='true'>Previous</span>
+                    </a>
+                </li>
+                <li class="page-item table-border" th:each="page: ${#numbers.sequence(start, end)}" th:classappend="${freeBoards.number eq page-1}?'active':''">
+                    <a id="color" th:onclick="'javascript:page(' + ${page - 1} + ')'" th:inline="text" class="page-link table-border">[[${page}]]</a>
+                </li>
+                <li class="page-item table-border" th:classappend="${freeBoards.last}?'disabled'">
+                    <a th:onclick="'javascript:page(' + ${freeBoards.number + 1} + ')'" aria-label='Next' class="page-link table-border">
+                        <span aria-hidden='true'>Next</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </form>
+</div>
+</body>
+</html>

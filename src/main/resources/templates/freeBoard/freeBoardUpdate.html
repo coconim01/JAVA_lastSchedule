@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/mylayout}">
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+<meta th:if="${_csrf}" name="_csrf" th:content="${_csrf.token}"/>
+<meta th:if="${_csrf}" name="_csrf_header" th:content="${_csrf.headerName}"/>
+<meta th:if="${_csrf}" name="_csrf_parameter" th:content="${_csrf.parameterName}"/>
+
+<!-- CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+
+<!-- JS, jQuery, Moment.js -->
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+    </script>
+</th:block>
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+    <style>
+        .input-group {
+            margin-bottom : 15px
+        }
+        .fieldError {
+            color: #bd2130;
+        }
+        .btn-outline-white {
+            background-color: #B0E0E6;
+            color: #343a40;
+            transition: transform 0.3s;
+        }
+
+        .btn-outline-white:hover {
+            transform: scale(1.05);
+        }
+        .table-border {
+            border-color: #B0E0E6;
+        }
+    </style>
+</th:block>
+
+<div class="content" layout:fragment="content">
+    <div class="card table-border" align="center" style="width:auto;">
+        <div class="d-flex table-border">
+            <div class="card flex-grow-1 table-border">
+                <div class="card-body table-border">
+                    <form role="form" method="post" th:object="${dto}">
+                        <p class="h2">
+                            자유게시글 수정하기
+                        </p>
+                        <br/>
+                        <input type="hidden" th:field="*{fb_no}">
+
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span style="background-color:#B0E0E6" class="input-group-text table-border">작성자</span>
+                            </div>
+                            <input type="text" th:field="*{fb_writer}" class="form-control table-border" placeholder="작성자를 입력해주세요">
+                        </div>
+                        <p th:if="${#fields.hasErrors('fb_writer')}" th:errors="*{fb_writer}" class="fieldError">Incorrect data</p>
+
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span style="background-color:#B0E0E6" class="input-group-text table-border">글제목</span>
+                            </div>
+                            <input type="text" th:field="*{fb_title}" class="form-control table-border" placeholder="글 제목을 입력해주세요.">
+                        </div>
+                        <p th:if="${#fields.hasErrors('fb_title')}" th:errors="*{fb_title}" class="fieldError">Incorrect data</p>
+
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span style="background-color:#B0E0E6" class="input-group-text table-border">글내용</span>
+                            </div>
+                            <input type="text" th:field="*{fb_content}" class="form-control table-border" placeholder="글 내용을 입력해주세요.">
+                        </div>
+                        <p th:if="${#fields.hasErrors('fb_content')}" th:errors="*{fb_content}" class="fieldError">Incorrect data</p>
+
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span style="background-color:#B0E0E6" class="input-group-text table-border">등록일</span>
+                            </div>
+                            <input type="date" th:field="*{fb_postDate}" class="form-control table-border">
+                        </div>
+                        <p th:if="${#fields.hasErrors('fb_postDate')}" th:errors="*{fb_postDate}" class="fieldError">Invalid Data</p>
+
+                        <div style="text-align: center">
+                            <button th:formaction="@{/freeboard/update}" type="submit" class="btn btn-outline-white"
+                                    style="margin-left: auto;">게시글 수정</button>
+                        </div>
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</html>

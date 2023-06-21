@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/mylayout}">
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta th:if="${_csrf}" name="_csrf" th:content="${_csrf.token}"/>
+<meta th:if="${_csrf}" name="_csrf_header" th:content="${_csrf.headerName}"/>
+<meta th:if="${_csrf}" name="_csrf_parameter" th:content="${_csrf.parameterName}"/>
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        $(document).ready(function() {
+            $("#searchBtn").on("click", function(e) {
+                e.preventDefault();
+                var mem_searchBy = $("#mem_searchBy").val();
+                var mem_searchQuery = $("#mem_searchQuery").val();
+                var url = "/members/list?mem_searchBy=" + mem_searchBy + "&mem_searchQuery=" + mem_searchQuery;
+                location.href = url;
+            });
+        });
+
+         function page(page){
+            var mem_searchBy = $("#mem_searchBy").val();
+            var mem_searchQuery = $("#mem_searchQuery").val();
+            var mem_searchUser = $("#mem_searchUser").val();
+            var mem_searchName = $("#mem_searchName").val();
+            var mem_searchEmail = $("#mem_searchEmail").val();
+            var mem_searchSchoolName = $("#mem_searchSchoolName").val();
+
+            location.href="/members/list/" + page + "?mem_searchBy=" + mem_searchBy
+            + "&mem_searchQuery=" + mem_searchQuery
+            + "&mem_searchUser=" + mem_searchUser
+            + "&mem_searchName=" + mem_searchName
+            + "&mem_searchEmail=" + mem_searchEmail
+            + "&mem_searchSchoolName=" + mem_searchSchoolName;
+        }
+    </script>
+
+    <style>
+        select{
+            margin-right:10px;
+        }
+
+        #color{
+          background: #B0E0E6;
+        }
+
+
+        .rwd-table {
+            margin: auto;
+            width: 95%;
+            border-collapse: collapse;
+        }
+
+        .rwd-table tr:first-child {
+            background: #B0E0E6;
+            color: #fff;
+        }
+
+        .rwd-table tr {
+            border-top: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+            background-color: white;
+        }
+
+        /*.rwd-table tr:nth-child(odd):not(:first-child) {*/
+        /*    background-color: #ebf3f9;*/
+        /*}*/
+
+        .rwd-table th {
+            display: none;
+        }
+
+        .rwd-table td {
+            display: block;
+        }
+
+        .rwd-table td:first-child {
+            margin-top: .5em;
+        }
+
+        .rwd-table td:last-child {
+            margin-bottom: .5em;
+        }
+
+        .rwd-table td:before {
+            /*content: attr(data-th) ": ";*/
+            font-weight: bold;
+            width: 120px;
+            display: inline-block;
+            color: #000;
+        }
+
+        .rwd-table th,
+        .rwd-table td {
+            text-align: left;
+        }
+
+        .rwd-table {
+            color: #333;
+            border-radius: .4em;
+            overflow: hidden;
+        }
+
+        .rwd-table tr {
+            border-color: #B0E0E6;
+        }
+
+        .rwd-table th,
+        .rwd-table td {
+            padding: .5em 1em;
+        }
+        @media screen and (max-width: 601px) {
+            .rwd-table tr:nth-child(2) {
+                border-top: none;
+            }
+            .rwd-table th:first-child,
+            .rwd-table td:first-child {
+                font-weight : bold;
+                color: black;
+            }
+            .rwd-table td a {
+                text-decoration: none;
+                color: black;
+            }
+        }
+        @media screen and (min-width: 600px) {
+            .rwd-table tr:hover:not(:first-child) {
+                background-color: rgba(206, 243, 249, 0.3);
+                /*background-color: #83F4B4;과 동일 opacity*/
+            }
+            .rwd-table td:before {
+                display: none;
+            }
+            .rwd-table td a {
+                text-decoration: none;
+                color: black;
+            }
+            .rwd-table th,
+            .rwd-table td {
+                display: table-cell;
+                padding: .25em .5em;
+            }
+            .rwd-table th:first-child,
+            .rwd-table td:first-child {
+                font-weight : bold;
+                padding-left: 0;
+            }
+            .rwd-table th:last-child,
+            .rwd-table td:last-child {
+                padding-right: 0;
+            }
+            .rwd-table th,
+            .rwd-table td {
+                padding: 1em !important;
+            }
+        }
+
+        .btn-outline-white {
+            background-color: #B0E0E6;
+            color: #343a40;
+            transition: transform 0.3s;
+        }
+
+        .btn-outline-white:hover {
+            transform: scale(1.05);
+        }
+        .table-border {
+            border-color: #B0E0E6;
+        }
+    </style>
+
+</th:block>
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+    <style>
+        select{
+            margin-right:10px;
+        }
+  </style>
+</th:block>
+<div class="content" layout:fragment="content">
+    <form method="get" th:object="${searchDto}">
+        <div class="form-inline justify-content-center table-border" th:unless="${#strings.equals(@memberRepository.findByEmail(#httpServletRequest.remoteUser).user, 'STUDENT')}">
+            <p class="h2">
+                회원목록
+            </p>
+            <br/>
+            <div>
+                <select class="form-control table-border" id="mem_searchBy" name="mem_searchBy" th:value="${searchDto.mem_searchBy}">
+                    <option value="" th:selected="${searchDto.mem_searchBy == ''}">전체</option>
+                    <option value="user" th:selected="${searchDto.mem_searchBy == 'user'}">사용자</option>
+                    <option value="name" th:selected="${searchDto.mem_searchBy == 'name'}">이름</option>
+                    <option value="email" th:selected="${searchDto.mem_searchBy == 'email'}">이메일</option>
+                    <option value="schoolName" th:selected="${searchDto.mem_searchBy == 'schoolName'}">학교명</option>
+                    <!-- Add other options here -->
+                </select>
+
+                <input th:field="*{mem_searchQuery}" class="form-control table-border" type="text" placeholder="검색어를 입력해주세요.">
+                <button id="searchBtn" type="submit" class="btn btn-outline-white">검색</button>
+
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            </div>
+        </div>
+
+        <br/>
+        <br/>
+
+        <div class="rwd-table" th:each="bean, status : ${members.getContent}" th:if="${#strings.equals(@memberRepository.findByEmail(#httpServletRequest.remoteUser).user, 'STUDENT') and #strings.equals(@memberRepository.findByEmail(#httpServletRequest.remoteUser).email, bean.email)}">
+            <p class="h2">
+                마이페이지
+            </p>
+            <table class="table" width="25%">
+                <tr>
+                    <td>사용자</td>
+                    <td th:text="${bean.user}"></td>
+                </tr>
+                <tr>
+                    <td>이름</td>
+                    <td th:text="${bean.name}"></td>
+                </tr>
+                <tr>
+                    <td>이메일</td>
+                    <td th:text="${bean.email}"></td>
+                </tr>
+                <tr>
+                    <td>학교명</td>
+                    <td th:text="${bean.schoolName}"></td>
+                </tr>
+                <tr>
+                    <td>학년</td>
+                    <td th:text="${bean.grade}"></td>
+                </tr>
+                <tr>
+                    <td>반</td>
+                    <td th:text="${bean.schoolClass}"></td>
+                </tr>
+                <tr>
+                    <td>학교코드</td>
+                    <td th:text="${bean.schoolCode}"></td>
+                </tr>
+                <tr>
+                    <td>고유번호</td>
+                    <td th:text="${bean.groupNumber}"></td>
+                </tr>
+                <tr>
+                    <td>그룹리스트</td>
+                    <td>
+                        <div th:each="group : ${groups}">
+                            <span th:text="${group.groupName}"></span>
+                            &nbsp;(
+                            <span th:text="${#temporals.format(group.regDate, 'yyyy-MM-dd')}"></span>)
+                        </div>
+                    </td>
+                </tr>
+
+            </table>
+        </div>
+
+        <table class="rwd-table">
+            <tbody align="center">
+            <tr align="center" th:unless="${#strings.equals(@memberRepository.findByEmail(#httpServletRequest.remoteUser).user, 'STUDENT')}">
+                <td></td>
+                <td>사용자</td>
+                <td>이름</td>
+                <td>이메일</td>
+                <td>학교명</td>
+                <td>학년</td>
+                <td>반</td>
+                <td>학교코드</td>
+                <td>고유번호</td>
+            </tr>
+
+
+            <tr th:each="bean, status : ${members.getContent}" th:if="${#strings.equals(@memberRepository.findByEmail(#httpServletRequest.remoteUser).user, 'TEACHER') and #strings.equals(@memberRepository.findByEmail(#httpServletRequest.remoteUser).schoolCode, bean.schoolCode)}">
+                <td></td>
+                <td th:text="${bean.user}"></td>
+                <td th:text="${bean.name}"></td>
+                <td th:text="${bean.email}"></td>
+                <td th:text="${bean.schoolName}"></td>
+                <td th:text="${bean.grade}"></td>
+                <td th:text="${bean.schoolClass}"></td>
+                <td th:text="${bean.schoolCode}"></td>
+                <td th:text="${bean.groupNumber}"></td>
+            </tr>
+            <tr th:each="bean, status : ${members.getContent}" th:if="${#strings.equals(@memberRepository.findByEmail(#httpServletRequest.remoteUser).user, 'ADMIN')}">
+                <td></td>
+                <td th:text="${bean.user}"></td>
+                <td th:text="${bean.name}"></td>
+                <td th:text="${bean.id}"></td>
+                <td th:text="${bean.email}"></td>
+                <td th:text="${bean.schoolName}"></td>
+                <td th:text="${bean.grade}"></td>
+                <td th:text="${bean.schoolClass}"></td>
+                <td th:text="${bean.schoolCode}"></td>
+                <td th:text="${bean.groupNumber}"></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <br/>
+        <a th:href="'/'">
+            <button type="button" class="btn btn-outline-white">돌아가기</button>
+        </a>
+        <!-- /* 페이지 네이션 */ -->
+
+    </form>
+</div>
+</html>

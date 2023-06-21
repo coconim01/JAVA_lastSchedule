@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/mylayout}">
+<head>
+
+</head>
+
+<th:block layout:fragment="css">
+    <style>
+
+.rwd-table {
+    margin: auto;
+    width: 95%;
+    border-collapse: collapse;
+}
+
+.rwd-table tr:first-child {
+    background: #B0E0E6;
+    color: #fff;
+}
+
+.rwd-table tr {
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    background-color: white;
+}
+
+/*.rwd-table tr:nth-child(odd):not(:first-child) {*/
+/*    background-color: #ebf3f9;*/
+/*}*/
+
+.rwd-table th {
+    display: none;
+}
+
+.rwd-table td {
+    display: block;
+}
+
+.rwd-table td:first-child {
+    margin-top: .5em;
+}
+
+.rwd-table td:last-child {
+    margin-bottom: .5em;
+}
+
+.rwd-table td:before {
+    /*content: attr(data-th) ": ";*/
+    font-weight: bold;
+    width: 120px;
+    display: inline-block;
+    color: #000;
+}
+
+.rwd-table th,
+.rwd-table td {
+    text-align: left;
+}
+
+.rwd-table {
+    color: #333;
+    border-radius: .4em;
+    overflow: hidden;
+}
+
+.rwd-table tr {
+    border-color: #B0E0E6;
+}
+
+.rwd-table th,
+.rwd-table td {
+    padding: .5em 1em;
+}
+@media screen and (max-width: 601px) {
+    .rwd-table tr:nth-child(2) {
+        border-top: none;
+    }
+    .rwd-table th:first-child,
+    .rwd-table td:first-child {
+        font-weight : bold;
+        color: black;
+    }
+    .rwd-table td a {
+        text-decoration: none;
+        color: black;
+    }
+}
+@media screen and (min-width: 600px) {
+    .rwd-table tr:hover:not(:first-child) {
+        background-color: rgba(206, 243, 249, 0.3);
+        /*background-color: #83F4B4;과 동일 opacity*/
+    }
+    .rwd-table td:before {
+        display: none;
+    }
+    .rwd-table td a {
+        text-decoration: none;
+        color: black;
+    }
+    .rwd-table th,
+    .rwd-table td {
+        display: table-cell;
+        padding: .25em .5em;
+    }
+    .rwd-table th:first-child,
+    .rwd-table td:first-child {
+        font-weight : bold;
+        padding-left: 0;
+    }
+    .rwd-table th:last-child,
+    .rwd-table td:last-child {
+        padding-right: 0;
+    }
+    .rwd-table th,
+    .rwd-table td {
+        padding: 1em !important;
+    }
+}
+
+    </style>
+</th:block>
+
+<body>
+<table class="rwd-table">
+    <tbody>
+    <tr>
+        <th>Shop Name</th>
+        <th>Shop Contact</th>
+        <th>Open&Close Time</th>
+        <th>Shop Address</th>
+        <th>Shop Introduction</th>
+    </tr>
+
+    <tr class="KOTRA-fontsize-80">
+        <td>shopName</td>
+        <td>010-222-222</td>
+        <td>09:00~18:00</td>
+        <td>addressadrress 11-11</td>
+        <td>content content content</td>
+
+    </tr>
+
+    <tr class="KOTRA-fontsize-80">
+        <td>shopName</td>
+        <td>010-222-222</td>
+        <td>09:00~18:00</td>
+        <td>addressadrress 11-11</td>
+        <td>content content content</td>
+
+    </tr>
+
+    <tr class="KOTRA-fontsize-80">
+        <td>shopName</td>
+        <td>010-222-222</td>
+        <td>09:00~18:00</td>
+        <td>addressadrress 11-11</td>
+        <td>content content content</td>
+
+    </tr>
+
+    </tbody>
+</table>
+</body>
+</html>

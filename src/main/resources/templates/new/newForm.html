@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/mylayout}">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta th:if="${_csrf}" name="_csrf" th:content="${_csrf.token}"/>
+  <meta th:if="${_csrf}" name="_csrf_header" th:content="${_csrf.headerName}"/>
+  <meta th:if="${_csrf}" name="_csrf_parameter" th:content="${_csrf.parameterName}"/>
+
+  <!-- JS, jQuery, Moment.js -->
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+  <style>
+  .big-button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px auto;
+  }
+
+  .big-button {
+    width: 300px;
+    height: 300px;
+    font-size: 30px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 160px;
+    margin: 0 30px; /* 버튼 사이 여백 조정 */
+    background-color: #D7EAFD;
+    color: #205E8B;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+</style>
+
+  <div class="content" layout:fragment="content">
+    <form action="" method="get" role="form">
+      <div class="big-button-container">
+        <a th:href="@{/group/new}">
+          <button type="button" class="big-button">그룹 만들기</button>
+        </a>
+        <a th:href="@{/personal/new}">
+          <button type="button" class="big-button">개인 일정 만들기</button>
+        </a>
+      </div>
+      <hr/>
+    </form>
+  </div>
+
+
+</html>

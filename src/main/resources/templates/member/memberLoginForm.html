@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta th:if="${_csrf}" name="_csrf" th:content="${_csrf.token}"/>
+    <meta th:if="${_csrf}" name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <meta th:if="${_csrf}" name="_csrf_parameter" th:content="${_csrf.parameterName}"/>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://kit.fontawesome.com/53a8c415f1.js" crossorigin="anonymous"></script>
+    <title>Form Input Wave</title>
+</head>
+
+<th:block layout:fragment="css">
+
+    <style>
+    /* CSS 코드 */
+    .fieldError{color:red; font-size:13pt;}
+    * {
+          box-sizing: border-box;
+          z-index: 2;
+        }
+
+        p {
+          position: relative;
+          z-index: 2;
+        }
+
+        button {
+          position: relative;
+          z-index: 2;
+        }
+
+
+
+        body {
+          background-color:   #B0E0E6;
+          color: #FFFFFF;
+          font-family: 'Muli', sans-serif;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          height: 100vh;
+          overflow: hidden;
+          margin: 0;
+          z-index: 2;
+        }
+
+        .container {
+          background-color: rgba(0, 0, 0, 0.4);
+          padding: 20px 40px;
+          border-radius: 5px;
+          z-index: 2;
+        }
+
+        .container h1 {
+          text-align: center;
+          margin-bottom: 30px;
+          z-index: 2;
+        }
+
+        .container a {
+          text-decoration: none;
+          color: #778899;
+          z-index: 2;
+        }
+
+        .btn {
+          cursor: pointer;
+          display: inline-block;
+          width: 100%;
+          background: lightblue;
+          padding: 15px;
+          font-family: inherit;
+          font-size: 16px;
+          border: 0;
+          border-radius: 5px;
+          z-index: 2;
+        }
+
+        .btn:focus {
+          outline: 0;
+          z-index: 2;
+        }
+
+        .btn:active {
+          transform: scale(0.98);
+          z-index: 2;
+        }
+
+        .text {
+          margin-top: 30px;
+          z-index: 2;
+        }
+
+        .form-control {
+          position: relative;
+          margin: 20px 0 40px;
+          width: 300px;
+          z-index: 2;
+        }
+
+        .form-control input {
+          background-color: transparent;
+          border: 0;
+          border-bottom: 2px #fff solid;
+          display: block;
+          width: 100%;
+          padding: 15px 0;
+          font-size: 18px;
+          color: #fff;
+          z-index: 2;
+        }
+
+        .form-control input:focus,
+        .form-control input:valid {
+          outline: 0;
+          border-bottom-color: #778899;
+          z-index: 2;
+        }
+
+        .form-control label {
+          position: absolute;
+          top: 15px;
+          left: 0;
+          pointer-events: none;
+          z-index: 2;
+        }
+
+        .form-control label span {
+          display: inline-block;
+          font-size: 18px;
+          min-width: 5px;
+          transition: 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+          z-index: 2;
+        }
+
+        .form-control input:focus + label span,
+        .form-control input:valid + label span {
+          color:#778899;
+          transform: translateY(-30px);
+          z-index: 2;
+        }
+
+    </style>
+    <style>
+
+
+        .bg-bubbles {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          z-index: 1;
+        }
+        .bg-bubbles li {
+          position: absolute;
+          list-style: none;
+          display: block;
+          width: 40px;
+          height: 40px;
+          background-color: rgba(255, 255, 255, 0.15);
+          bottom: -160px;
+          -webkit-animation: square 25s infinite;
+          animation: square 25s infinite;
+          -webkit-transition-timing-function: linear;
+          transition-timing-function: linear;
+        }
+        .bg-bubbles li:nth-child(1) {
+          left: 10%;
+        }
+        .bg-bubbles li:nth-child(2) {
+          left: 20%;
+          width: 80px;
+          height: 80px;
+          animation-delay: 2s;
+          animation-duration: 17s;
+        }
+        .bg-bubbles li:nth-child(3) {
+          left: 25%;
+          animation-delay: 4s;
+        }
+        .bg-bubbles li:nth-child(4) {
+          left: 40%;
+          width: 60px;
+          height: 60px;
+          animation-duration: 22s;
+          background-color: rgba(255, 255, 255, 0.25);
+        }
+        .bg-bubbles li:nth-child(5) {
+          left: 70%;
+        }
+        .bg-bubbles li:nth-child(6) {
+          left: 80%;
+          width: 120px;
+          height: 120px;
+          animation-delay: 3s;
+          background-color: rgba(255, 255, 255, 0.2);
+        }
+        .bg-bubbles li:nth-child(7) {
+          left: 32%;
+          width: 160px;
+          height: 160px;
+          animation-delay: 7s;
+        }
+        .bg-bubbles li:nth-child(8) {
+          left: 55%;
+          width: 20px;
+          height: 20px;
+          animation-delay: 15s;
+          animation-duration: 40s;
+        }
+        .bg-bubbles li:nth-child(9) {
+          left: 25%;
+          width: 10px;
+          height: 10px;
+          animation-delay: 2s;
+          animation-duration: 40s;
+          background-color: rgba(255, 255, 255, 0.3);
+        }
+        .bg-bubbles li:nth-child(10) {
+          left: 90%;
+          width: 160px;
+          height: 160px;
+          animation-delay: 11s;
+        }
+        @-webkit-keyframes square {
+          0% {
+            transform: translateY(0);
+          }
+          100% {
+            transform: translateY(-700px) rotate(600deg);
+          }
+        }
+        @keyframes square {
+          0% {
+            transform: translateY(0);
+          }
+          100% {
+            transform: translateY(-700px) rotate(600deg);
+          }
+        }
+
+    </style>
+
+</th:block>
+
+<body>
+<div class="wrapper">
+    <div class="content" layout:fragment="content">
+        <h1>Please Login</h1>
+        <form action="/members/login" method="post" role="form">
+            <!-- form 코드 -->
+            <div class="form-control">
+
+                <input type="email" name="email" required />
+
+                <label th:for="email">
+                    <span style="transition-delay: 0ms">E</span>
+                    <span style="transition-delay: 50ms">m</span>
+                    <span style="transition-delay: 100ms">a</span>
+                    <span style="transition-delay: 150ms">i</span>
+                    <span style="transition-delay: 200ms">l</span>
+                </label>
+            </div>
+
+            <div class="form-control">
+                <input type="password" name="password" required />
+                <label th:for="password">Password</label>
+            </div>
+            <p th:if="${loginErrorMsg}" class="fieldError" th:text="${loginErrorMsg}"></p>
+
+            <button type="submit" class="btn">Login</button>
+
+            <p class="text">Don't have an account? <a href="/members/new">회원가입</a></p>
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+        </form>
+    </div>
+    <ul class="bg-bubbles">
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+    </ul>
+</div>
+
+<script>
+    const labels = document.querySelectorAll(".form-control label");
+
+    labels.forEach((label) => {
+      label.innerHTML = label.innerText
+        .split("")
+        .map(
+          (letter, idx) =>
+            `<span style="transition-delay:${idx * 50}ms">${letter}</span>`
+        )
+        .join("");
+    });
+</script>
+<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+</body>
+
+</html>

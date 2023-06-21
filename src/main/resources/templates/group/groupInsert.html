@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/mylayout}">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta th:if="${_csrf}" name="_csrf" th:content="${_csrf.token}"/>
+    <meta th:if="${_csrf}" name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <meta th:if="${_csrf}" name="_csrf_parameter" th:content="${_csrf.parameterName}"/>
+    <!-- CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+
+    <!-- JS, jQuery, Moment.js -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+
+
+    <!-- 사용자 정의 CSS 추가 -->
+    <th:block layout:fragment="css">
+        <style>
+            .img-div{margin-botton:10px;}
+            .input-group{margin-bottom:15px;}
+            .fieldError{color:red; font-size:13pt;}
+            .selected { background-color: CadetBlue; }
+
+            .btn-outline-white {
+                background-color: #B0E0E6;
+                color: #343a40;
+                transition: transform 0.3s;
+            }
+
+            .btn-outline-white:hover {
+                transform: scale(1.05);
+            }
+            .table-border {
+                border-color: #B0E0E6;
+            }
+
+    </style>
+    </th:block>
+
+    <th:block layout:fragment="script">
+        <script th:inline="javascript">
+
+        </script>
+    </th:block>
+</head>
+
+<body>
+<div class="content" layout:fragment="content">
+    <div id="notification"></div>
+    <div class="card table-border" align="center" style="width:auto;">
+        <div class="d-flex table-border">
+            <div class="card flex-grow-1 table-border">
+                <div class="card-body table-border">
+                    <form action="" method="post" role="form" th:object="${groupFormDto}">
+                        <p class="h2">
+                            그룹 등록
+                        </p>
+                        <br/>
+                        <input type="hidden" th:field="*{id}">
+
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span style="background-color:#B0E0E6" class="input-group-text table-border">그룹 이름</span>
+                            </div>
+                            <input type="text" th:field="*{groupName}" class="form-control table-border" placeholder="그룹명 입력해주세요.">
+                        </div>
+
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span style="background-color:#B0E0E6" class="input-group-text table-border">담당자</span>
+                            </div>
+                            <input style="background-color:#B0E0E6" type="text" th:value="${#session.getAttribute('name')}" class="form-control table-border" readonly>
+                        </div>
+                        <input type="hidden" id="headCount" th:field="*{headCount}" class="form-control" value="0">
+
+
+                        <!-- 멤버 목록 불러오기 -->
+                        <div class="form-group">
+                            <label for="memberSelect">Select Members:</label>
+                            <select id="memberSelect" multiple="multiple" class="form-control table-border" name="memberIds">
+                                <option th:each="member : ${members}" th:value="${member.id}" th:text="${member.name}"></option>
+                            </select>
+                            <input type="hidden" th:field="*{memberIds}" />
+                        </div>
+
+                        <!-- 추가된 JavaScript -->
+                        <script th:inline="javascript">
+                            // 멤버 선택 시 총 학생 수 업데이트
+                            var memberSelect = document.getElementById("memberSelect");
+
+                            var selectedOptions = new Set(); // 선택된 옵션을 저장할 Set
+
+                            memberSelect.addEventListener("dblclick", function(event) {
+                                var option = event.target;
+                                var optionValue = option.value;
+
+                                // 선택된 옵션 처리
+                                if (selectedOptions.has(optionValue)) {
+                                    selectedOptions.delete(optionValue);
+                                    option.classList.remove("selected");
+                                } else {
+                                    selectedOptions.add(optionValue);
+                                    option.classList.add("selected");
+                                    console.log("회원이 선택되었습니다");
+                                }
+
+                                // 선택된 옵션들을 설정하고, 총 학생 수 업데이트
+                                memberSelect.value = Array.from(selectedOptions);
+
+
+                                // 선택된 멤버 ID들을 숨은 필드에 설정하여 서버로 전달
+                                document.getElementById("memberIds").value = Array.from(selectedOptions);
+                            });
+                        </script>
+
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span style="background-color:#B0E0E6" class="input-group-text table-border">특이사항</span>
+                            </div>
+                            <input type="text" th:field="*{specialNote}" class="form-control table-border" placeholder="특이사항 입력해주세요.">
+                        </div>
+
+                        <div style="text-align: center">
+                            <button type="submit" name="action" value="group" class="btn btn-outline-white">그룹 등록</button>
+                            <button type="submit" name="action" value="issue" class="btn btn-outline-white">이슈 등록</button>
+
+                        </div>
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

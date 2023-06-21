@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/mylayout}">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+<meta th:if="${_csrf}" name="_csrf" th:content="${_csrf.token}"/>
+<meta th:if="${_csrf}" name="_csrf_header" th:content="${_csrf.headerName}"/>
+<meta th:if="${_csrf}" name="_csrf_parameter" th:content="${_csrf.parameterName}"/>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+
+<!-- JS, jQuery, Moment.js -->
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+
+<!-- 사용자 정의 CSS 추가 -->
+    <th:block layout:fragment="css">
+        <style>
+            .input-group{margin-bottom:15px;}
+            .img-div{margin-bottom:10px;}
+            .fieldError{color:red; font-size:13pt;}
+
+            .btn-outline-white {
+                background-color: #B0E0E6;
+                color: #343a40;
+                transition: transform 0.3s;
+            }
+
+            .btn-outline-white:hover {
+                transform: scale(1.05);
+            }
+            .table-border {
+                border-color: #B0E0E6;
+            }
+        </style>
+    </th:block>
+    <th:block layout:fragment="script">
+        <script th:inline="javascript">
+
+        </script>
+    </th:block>
+</head>
+
+<div class="content" layout:fragment="content">
+    <div class="card table-border" align="center" style="width:auto;">
+        <div class="d-flex table-border">
+            <div class="card flex-grow-1 table-border">
+                <div class="card-body table-border">
+                    <form action="" method="post" role="form" th:object="${noticeBoardFormDto}">
+                        <p class="h2">
+                            공지게시물 등록
+                        </p>
+                        <br/>
+                        <input type="hidden" th:field="*{nb_no}">
+                        <input hidden class="form-control" th:value="${@memberRepository.findByEmail(#httpServletRequest.remoteUser).email}" readonly name="nb_email">
+                        <input hidden class="form-control" th:value="${@memberRepository.findByEmail(#httpServletRequest.remoteUser).groupNumber}" readonly name="nb_groupNumber">
+                        <input hidden class="form-control" th:value="${@memberRepository.findByEmail(#httpServletRequest.remoteUser).schoolCode}" readonly name="nb_schoolCode">
+                        <p th:if="${#fields.hasErrors('nb_groupNumber')}" th:errors="*{nb_groupNumber}" class="fieldError">Invalid Data</p>
+
+
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span style="background-color:#B0E0E6" class="input-group-text table-border">작성자</span>
+                            </div>
+                            <input style="background-color:#B0E0E6" type="text" class="form-control table-border" th:value="${@memberRepository.findByEmail(#httpServletRequest.remoteUser).name}" readonly name="nb_writer">
+                        </div>
+                        <p th:if="${#fields.hasErrors('nb_writer')}" th:errors="*{nb_writer}" class="fieldError">Invalid Data</p>
+
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span style="background-color:#B0E0E6" class="input-group-text table-border">글제목</span>
+                            </div>
+                            <input type="text" th:field="*{nb_title}" class="form-control table-border" placeholder="글제목을 입력해주세요.">
+                        </div>
+                        <p th:if="${#fields.hasErrors('nb_title')}" th:errors="*{nb_title}" class="fieldError">Invalid Data</p>
+
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span style="background-color:#B0E0E6" class="input-group-text table-border">글내용</span>
+                            </div>
+                            <textarea th:field="*{nb_content}" class="form-control table-border" rows="3" placeholder="글내용을 입력해주세요."></textarea>
+                        </div>
+
+                        <p th:if="${#fields.hasErrors('nb_content')}" th:errors="*{nb_content}" class="fieldError">Invalid Data</p>
+
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span style="background-color:#B0E0E6" class="input-group-text table-border">등록일</span>
+                            </div>
+                            <input style="background-color:#B0E0E6" type="date" id="nb_postDate" th:field="*{nb_postDate}" class="form-control table-border" readonly>
+                        </div>
+
+                        <script th:inline="javascript">
+                            $(document).ready(function() {
+                                var currentDate = new Date().toISOString().split('T')[0];
+                                $('#nb_postDate').val(currentDate);
+                            });
+                        </script>
+                        <p th:if="${#fields.hasErrors('nb_postDate')}" th:errors="*{nb_postDate}" class="fieldError">Invalid Data</p>
+
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span style="background-color:#B0E0E6" class="input-group-text table-border">시작일</span>
+                            </div>
+                            <input type="date" th:field="*{nb_startDate}" class="form-control table-border">
+                        </div>
+                        <p th:if="${#fields.hasErrors('nb_startDate')}" th:errors="*{nb_startDate}" class="fieldError">Invalid Data</p>
+
+
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span style="background-color:#B0E0E6" class="input-group-text table-border">마감일</span>
+                            </div>
+                            <input type="date" th:field="*{nb_finishDate}" class="form-control table-border" id="datepicker">
+                        </div>
+                        <p th:if="${#fields.hasErrors('nb_finishDate')}" th:errors="*{nb_finishDate}" class="fieldError">Invalid Data</p>
+
+                        <div style="text-align: center">
+                            <button th:formaction="@{/noticeboard/new}" type="submit"
+                                    class="btn btn-outline-white"
+                                    style="margin-left: auto;">공지 등록</button>
+                        </div>
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</html>

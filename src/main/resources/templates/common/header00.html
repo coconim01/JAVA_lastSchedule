@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+            integrity="sha384-KyI9I4RAS01ZUs4M0MEP3lfrOx1BjrnvDvyyBa+QGJwoUv+/d4R7Hc+1G/cI0hAe"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+            integrity="sha384-pzjw8q0Kph3ca8sX+5+9RQ9s630y0b/3cDta4xv5Z/J6oWt/ja2gmOTt8CI2YvO4"
+            crossorigin="anonymous"></script>
+
+</head>
+<body th:fragment="asdf">
+
+<nav class="navbar navbar-expand-sm bg-primary navbar-dark">
+    <!-- Navbar content -->
+
+    <a href="/" style="color:black;">HOME</a>
+
+    <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+
+        <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+            <div>
+                <form class="toggle">
+                    <input type="radio" id="choice1" name="choice" value="creative" onchange="toggleMenu()" hidden>
+                    <label for="choice1" class="button btnPush btnLightBlue" title="Button push lightblue">학교</label>
+                    <input type="radio" id="choice2" name="choice" value="productive" onchange="toggleMenu()" checked hidden>
+                    <label for="choice2" class="button btnPush btnLightBlue" title="Button push lightblue">개인</label>
+                </form>
+            </div>
+
+            <!-- 로그인은 추후 메인페이지로 활용 -->
+
+            <li class="nav-item dropdown" id="navbarDropdown"  sec:authorize="isAnonymous()">
+                <a class="nav-link dropdown-toggle" href="/members/login">로그인</a>
+            </li>
+            <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
+                <label class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <ui class="nav-item">
+                        <span th:text="${@memberRepository.findByEmail(#httpServletRequest.remoteUser).name}"></span>
+                    </ui>
+                </label>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <li class="nav-item dropdown"  id="navbarDropdown"  sec:authorize="isAuthenticated()">
+                        <a class="nav-link dropdown-item" href="/members/list" style="color:black;">회원정보</a>
+                    </li>
+                    <li class="nav-item dropdown"  id="navbarDropdown"  sec:authorize="isAuthenticated()">
+                        <a class="nav-link dropdown-item" href="/members/logout" style="color:black;">로그아웃</a>
+                    </li>
+                </ul>
+            </li>
+
+            <li class="nav-item dropdown" sec:authorize="isAuthenticated()" id="projectMenu" style="display: none;">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    게시판
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <li class="nav-item" sec:authorize="isAuthenticated()">
+                        <a class="nav-link dropdown-item" href="/noticeboard/list" style="color:black;">공지게시판</a>
+                    </li>
+                    <li class="nav-item" sec:authorize="isAuthenticated()">
+                        <a class="nav-link dropdown-item" href="/suggestboard/list" style="color:black;">건의게시판</a>
+                    </li>
+                    <li class="nav-item" sec:authorize="isAuthenticated()">
+                        <a class="nav-link dropdown-item" href="/freeboard/list" style="color:black;">자유게시판</a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item dropdown" sec:authorize="isAuthenticated()" id="projectMenu2" style="display: none;">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    일정
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <li class="nav-item" sec:authorize="isAuthenticated()">
+                        <a class="nav-link dropdown-item" href="/project/new" style="color:black;">일정 생성</a>
+                    </li>
+                    <li class="nav-item" sec:authorize="isAuthenticated()">
+                        <a class="nav-link dropdown-item" href="/project/list" style="color:black;">일정표 보기</a>
+                    </li>
+                </ul>
+            </li>
+
+            <li class="nav-item dropdown" sec:authorize="isAuthenticated()" id="otherMenu" style="display: block;">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    나의 게시판
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <li class="nav-item" sec:authorize="isAuthenticated()">
+                        <a class="nav-link dropdown-item" href="/events/personal" style="color:black;">나의 일정 게시판</a>
+                    </li>
+                    <li class="nav-item" sec:authorize="isAuthenticated()">
+                        <a class="nav-link dropdown-item" href="/group/new" style="color:black;">나의 동아리 만들기</a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item dropdown" sec:authorize="isAuthenticated()" id="otherMenu2" style="display: block;">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    나의 일정표
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <li class="nav-item" sec:authorize="isAuthenticated()">
+                        <a class="nav-link dropdown-item" href="/#/new" style="color:black;">일정표 생성</a>
+                    </li>
+                    <li class="nav-item" sec:authorize="isAuthenticated()">
+                        <a class="nav-link dropdown-item" href="/#/list" style="color:black;">일정표 보기</a>
+                    </li>
+                </ul>
+            </li>
+
+
+            <li class="nav-item dropdown" sec:authorize="isAuthenticated()" >
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    알림
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<script>
+    function setCookie(name, value, days) {
+        var expires = "";
+        if (days) {
+            var date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            expires = "; expires=" + date.toUTCString();
+        }
+        document.cookie = name + "=" + (value || "") + expires + "; path=/";
+    }
+
+    function getCookie(name) {
+        var nameEQ = name + "=";
+        var ca = document.cookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ')
+            c = c.substring(1, c.length);
+            if (c.indexOf(nameEQ) == 0)
+            return c.substring(nameEQ.length, c.length);
+        }
+        return null;
+    }
+
+    var checkbox = document.querySelector('input[name="choice"]');
+    var radioGroup = document.querySelectorAll('input[name="choice"]');
+
+    // 체크된 라디오 버튼의 값을 쿠키에 저장합니다.
+    function saveSelectedChoice() {
+        var selectedValue = document.querySelector('input[name="choice"]:checked').value;
+        var currentChoice = getCookie("selectedChoice");
+
+        if (selectedValue !== currentChoice) {
+            setCookie("selectedChoice", selectedValue, 7);
+        }
+    }
+
+    checkbox.addEventListener('change', saveSelectedChoice);
+
+    radioGroup.forEach(function (radio) {
+        radio.addEventListener('change', saveSelectedChoice);
+    });
+
+    // 페이지 로드 시, 쿠키 값을 읽어와 체크 상태를 설정합니다.
+    var selectedChoice = getCookie("selectedChoice");
+    if (selectedChoice) {
+        document.getElementById("choice1").checked = (selectedChoice === "creative");
+        document.getElementById("choice2").checked = (selectedChoice === "productive");
+        toggleMenu(); // 페이지 로드 시에 toggleMenu() 호출하여 메뉴를 변경합니다.
+    }
+
+    function toggleMenu() {
+        var choice = document.querySelector('input[name="choice"]:checked').value;
+        var projectMenu = document.getElementById("projectMenu");
+        var projectMenu2 = document.getElementById("projectMenu2");
+        var otherMenu = document.getElementById("otherMenu");
+        var otherMenu2 = document.getElementById("otherMenu2");
+        var choice1Label = document.querySelector('label[for="choice1"]');
+        var choice2Label = document.querySelector('label[for="choice2"]');
+
+        if (choice === "creative") {
+            projectMenu.style.display = "block";
+            projectMenu2.style.display = "block";
+            otherMenu.style.display = "none";
+            otherMenu2.style.display = "none";
+            choice1Label.classList.add("active");
+            choice2Label.classList.remove("active");
+        } else if (choice === "productive") {
+            projectMenu.style.display = "none";
+            projectMenu2.style.display = "none";
+            otherMenu.style.display = "block";
+            otherMenu2.style.display = "block";
+            choice1Label.classList.remove("active");
+            choice2Label.classList.add("active");
+        }
+    }
+
+    // 페이지 로드 시에 toggleMenu() 호출하여 초기 메뉴를 설정합니다.
+    toggleMenu();
+</script>
+<style>
+    body {
+
+      font-size: 20px;
+      line-height: 24px;
+      color: #333;
+      background: #ececec;
+      overflow-y: scroll;
+    }
+
+    p {
+      margin-bottom: 0.5em;
+    }
+
+    label,
+    label:visited {
+      text-decoration: none;
+      color: #00AE68;
+    }
+
+    .clear {
+      clear: both;
+    }
+
+
+    .wrapper {
+      width: 600px;
+      margin: 20px auto;
+    }
+
+
+
+    label.button {
+      display: block;
+      position: relative;
+      float: left;
+      width: 120px;
+      padding: 0;
+      margin: 10px 20px 10px 0;
+      font-weight: 600;
+      text-align: center;
+      line-height: 50px;
+      color: #FFF;
+      border-radius: 5px;
+      transition: all 0.2s ;
+    }
+
+    .btnBlueGreen {
+      background: #00AE68;
+    }
+
+    .btnLightBlue {
+      background: #5DC8CD;
+    }
+
+    .btnOrange {
+      background: #FFAA40;
+    }
+
+    .btnPurple {
+      background: #A74982;
+    }
+
+    /* 3D */
+    .btnBlueGreen.btnPush {
+      box-shadow: 0px 5px 0px 0px #007144;
+    }
+
+    .btnLightBlue.btnPush {
+      box-shadow: 0px 5px 0px 0px #1E8185;
+    }
+
+    .btnOrange.btnPush {
+      box-shadow: 0px 5px 0px 0px #A66615;
+    }
+
+    .btnPurple.btnPush {
+      box-shadow: 0px 5px 0px 0px #6D184B;
+    }
+
+    .btnPush:hover {
+      margin-top: 15px;
+      margin-bottom: 5px;
+    }
+
+    .btnBlueGreen.btnPush:hover {
+      box-shadow: 0px 0px 0px 0px #007144;
+    }
+
+    .btnLightBlue.btnPush:hover {
+      box-shadow: 0px 0px 0px 0px #1E8185;
+    }
+
+    .btnOrange.btnPush:hover {
+      box-shadow: 0px 0px 0px 0px #A66615;
+    }
+
+    .btnPurple.btnPush:hover {
+      box-shadow: 0px 0px 0px 0px #6D184B;
+    }
+
+    input[type="radio"]:checked + label {
+        box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.2);
+        margin-top: 15px;
+        margin-bottom: 5px;
+    }
+</style>
+</body>
+</html>
